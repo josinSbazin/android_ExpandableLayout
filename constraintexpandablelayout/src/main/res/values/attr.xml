@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ConstraintExpandableLayout">
+        <attr name="el_collapsedHeight" format="dimension"/>
+        <attr name="el_withShadow" format="boolean"/>
+        <attr name="el_shadowHeight" format="dimension"/>
+        <attr name="el_moreText" format="string"/>
+        <attr name="el_collapseDuration" format="integer"/>
+        <attr name="el_initialState" format="enum">
+            <enum name="collapsed" value="1"/>
+            <enum name="expanded" value="2"/>
+            <enum name="simple" value="3"/>
+        </attr>
+    </declare-styleable>
+</resources>
