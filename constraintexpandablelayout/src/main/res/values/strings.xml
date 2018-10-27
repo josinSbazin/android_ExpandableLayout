@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">ConstraintExpandableLayout</string>
-    <string name="more">More</string>
+    <string name="defaultMoreText">More</string>
 </resources>

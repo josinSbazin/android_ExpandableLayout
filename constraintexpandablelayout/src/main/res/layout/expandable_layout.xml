@@ -20,7 +20,7 @@
     </LinearLayout>
 
     <View
-            android:id="@+id/evFadeOut"
+            android:id="@+id/evShadow"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:background="@drawable/fade_out"
@@ -28,7 +28,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/evHolder"
             />
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
             android:id="@+id/evMoreImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,25 +37,25 @@
             android:layout_marginRight="4dp"
             android:layout_marginStart="8dp"
             android:rotation="180"
+            android:contentDescription="@string/defaultMoreText"
             app:layout_constraintEnd_toStartOf="@+id/evMoreText"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/evHolder"
             app:srcCompat="@drawable/ic_keyboard_arrow_down_accent"
-            android:contentDescription="@string/more"
             />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
             android:id="@+id/evMoreText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/more"
+            android:text="@string/defaultMoreText"
             android:textAllCaps="true"
             android:textColor="?colorAccent"
+            app:fontFamily="sans-serif-medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
