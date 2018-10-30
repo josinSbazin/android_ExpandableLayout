@@ -5,6 +5,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.ColorInt
 import android.support.constraint.ConstraintLayout
+import android.support.constraint.ConstraintSet
 import android.support.transition.ChangeBounds
 import android.support.transition.Fade
 import android.support.transition.TransitionSet
@@ -23,6 +24,9 @@ class ConstraintExpandableLayout : ConstraintLayout {
     private val moreTextView: TextView
     private val moreImageView: ImageView
     private val shadow: View
+
+    private lateinit var collapsedSet: ConstraintSet
+    private lateinit var expandedSet: ConstraintSet
 
     private lateinit var transition: TransitionSet
 
@@ -94,7 +98,7 @@ class ConstraintExpandableLayout : ConstraintLayout {
         }
 
     constructor(context: Context) : super(context) {
-        init(null)
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
@@ -143,6 +147,12 @@ class ConstraintExpandableLayout : ConstraintLayout {
             state = State.values()[getInt(R.styleable.ConstraintExpandableLayout_el_initialState, DEFAULT_STATE)]
 
         }
+
+        expandedSet = ConstraintSet().apply { clone(this) }
+        collapsedSet = expandedSet.apply {
+            clone(this)
+        }
+
 
         typedArray.recycle()
     }
