@@ -54,12 +54,12 @@
             android:layout_marginRight="8dp"
             android:text="@string/defaultMoreText"
             android:textAllCaps="true"
-            android:textColor="?colorAccent"
+            android:textColor="@color/defaultMoreColor"
             app:fontFamily="sans-serif-medium"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/evMoreImage"
-            app:layout_constraintTop_toBottomOf="@+id/evHolder"
+            app:layout_constraintBottom_toBottomOf="@+id/evMoreImage"
+            app:layout_constraintTop_toTopOf="@+id/evMoreImage"
             />
 </merge>

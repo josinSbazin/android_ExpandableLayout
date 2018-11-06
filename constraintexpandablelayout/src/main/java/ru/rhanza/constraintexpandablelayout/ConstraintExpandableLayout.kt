@@ -8,6 +8,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
 import android.support.transition.ChangeBounds
 import android.support.transition.Fade
+import android.support.transition.TransitionManager
 import android.support.transition.TransitionSet
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -25,13 +26,15 @@ class ConstraintExpandableLayout : ConstraintLayout {
     private val moreImageView: ImageView
     private val shadow: View
 
+    private var dontInterceptAddView = true
+
     private lateinit var collapsedSet: ConstraintSet
     private lateinit var expandedSet: ConstraintSet
 
     private lateinit var transition: TransitionSet
 
-    /** Current [State] of this [ConstraintExpandableLayout]. Read-only property. [State.Static] by default. */
-    var state = State.Static
+    /** Current [State] of this [ConstraintExpandableLayout]. Read-only property. [State.Statical] by default. */
+    var state = State.Statical
         private set(value) {
             if (field != value) {
                 onStateChangeListener?.invoke(field, value)
@@ -47,12 +50,12 @@ class ConstraintExpandableLayout : ConstraintLayout {
     /**
      * Collapsed height of view
      */
-    var collapsedHeight = DEFAULT_COLLAPSED_HEIGHT_PX
+    var collapsedHeight = context.resources.getDimensionPixelSize(R.dimen.default_collapsed_height)
 
     /**
      * Height of shadow when layout is collapsed
      */
-    var shadowHeight = DEFAULT_SHADOW_HEIGHT_PX
+    var shadowHeight = context.resources.getDimensionPixelSize(R.dimen.default_shadow_height)
         set(value) {
             val layoutParams = shadow.layoutParams
             layoutParams.height = value
@@ -81,9 +84,11 @@ class ConstraintExpandableLayout : ConstraintLayout {
     /**
      * Duration of animation of collapse/expand. In milliseconds
      */
-    var animationDuration = DEFAULT_COLLAPSED_DURATION
+    var animationDuration = context.resources.getInteger(R.integer.default_animation_duration)
         set(value) {
-            transition = createTransitionSet(value.toLong())
+            if (!isInEditMode) {
+                transition = createTransitionSet(value.toLong())
+            }
             field = value
         }
 
@@ -110,15 +115,20 @@ class ConstraintExpandableLayout : ConstraintLayout {
     }
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.expandable_layout, this, true)
+        LayoutInflater.from(context).inflate(R.layout.expandable_layout_expanded, this)
         contentView = findViewById(R.id.evHolder)
         moreTextView = findViewById(R.id.evMoreText)
         moreImageView = findViewById(R.id.evMoreImage)
         shadow = findViewById(R.id.evShadow)
+        dontInterceptAddView = false
     }
 
     override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
-        contentView.addView(child, index, params)
+        if (dontInterceptAddView) {
+            super.addView(child, index, params)
+        } else {
+            contentView.addView(child, index, params)
+        }
     }
 
     //region Private Methods
@@ -130,16 +140,24 @@ class ConstraintExpandableLayout : ConstraintLayout {
         typedArray.apply {
             collapsedHeight = getDimensionPixelSize(
                 R.styleable.ConstraintExpandableLayout_el_collapsedHeight,
-                DEFAULT_COLLAPSED_HEIGHT_PX
+                context.resources.getDimensionPixelSize(R.dimen.default_collapsed_height)
             )
             shadowHeight = getDimensionPixelSize(
                 R.styleable.ConstraintExpandableLayout_el_shadowHeight,
-                DEFAULT_SHADOW_HEIGHT_PX
+                context.resources.getDimensionPixelSize(R.dimen.default_shadow_height)
             )
             showShadow = getBoolean(R.styleable.ConstraintExpandableLayout_el_showShadow, DEFAULT_SHOW_SHADOW_VALUE)
-            moreText = getText(R.styleable.ConstraintExpandableLayout_el_moreText)
+
+            val moreTextStyleable = getText(R.styleable.ConstraintExpandableLayout_el_moreText)
+            if (moreTextStyleable != null) {
+                moreText = moreTextStyleable
+            }
+
             animationDuration =
-                    getInt(R.styleable.ConstraintExpandableLayout_el_animationDuration, DEFAULT_COLLAPSED_DURATION)
+                    getInt(
+                        R.styleable.ConstraintExpandableLayout_el_animationDuration,
+                        context.resources.getInteger(R.integer.default_animation_duration)
+                    )
             moreColor = getColor(
                 R.styleable.ConstraintExpandableLayout_el_moreColor,
                 ContextCompat.getColor(context, R.color.defaultMoreColor)
@@ -149,10 +167,10 @@ class ConstraintExpandableLayout : ConstraintLayout {
         }
 
         expandedSet = ConstraintSet().apply { clone(this) }
-        collapsedSet = expandedSet.apply {
-            clone(this)
+        collapsedSet = ConstraintSet().apply {
+            clone(context, R.layout.expandable_layout_collapsed)
+            constrainHeight(R.id.evHolder, collapsedHeight)
         }
-
 
         typedArray.recycle()
     }
@@ -174,20 +192,28 @@ class ConstraintExpandableLayout : ConstraintLayout {
         when (restoredState) {
             State.Collapsed, State.Collapsing -> collapse(withAnimation = false)
             State.Expanded, State.Expanding -> expand(withAnimation = false)
-            State.Static -> makeStatic()
+            State.Statical -> makeStatic()
         }
     }
 
     private fun collapse(withAnimation: Boolean = true) {
-
+        if (state == State.Collapsed || state == State.Expanding || state == State.Collapsing) return
+        if (withAnimation) {
+            TransitionManager.beginDelayedTransition(this, transition)
+        }
+        collapsedSet.applyTo(this)
     }
 
     private fun expand(withAnimation: Boolean = true) {
-
+        if (state == State.Expanded || state == State.Expanding || state == State.Collapsing) return
+        if (withAnimation) {
+            TransitionManager.beginDelayedTransition(this, transition)
+        }
+        expandedSet.applyTo(this)
     }
 
     private fun makeStatic() {
-
+        //todo
     }
 
     //endregion
@@ -235,9 +261,6 @@ class ConstraintExpandableLayout : ConstraintLayout {
     //endregion
 
     companion object {
-        private const val DEFAULT_COLLAPSED_HEIGHT_PX = 40
-        private const val DEFAULT_SHADOW_HEIGHT_PX = 20
-        private const val DEFAULT_COLLAPSED_DURATION = 200
         private const val DEFAULT_SHOW_SHADOW_VALUE = false
         private const val DEFAULT_STATE = 0
     }
@@ -246,7 +269,7 @@ class ConstraintExpandableLayout : ConstraintLayout {
 enum class State {
     Collapsed,
     Expanded,
-    Static,
+    Statical,
     Collapsing,
     Expanding
 }
