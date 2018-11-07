@@ -118,6 +118,12 @@ class ConstraintExpandableLayout : ConstraintLayout {
             field = value
         }
 
+    /**
+     * Animation scene root for transition. Use for animate container for this view.
+     * Do not save when [ConstraintExpandableLayout] paralyzed. Set it manually when restore.
+     */
+    var animationSceneRoot: ViewGroup? = null
+
     constructor(context: Context) : super(context) {
         init()
     }
@@ -242,7 +248,7 @@ class ConstraintExpandableLayout : ConstraintLayout {
             transition.setOnEndListener {
                 state = State.Collapsed
             }
-            TransitionManager.beginDelayedTransition(this, transition)
+            TransitionManager.beginDelayedTransition(animationSceneRoot ?: this, transition)
         }
         collapsedSet.applyTo(this)
     }
@@ -254,7 +260,7 @@ class ConstraintExpandableLayout : ConstraintLayout {
             transition.setOnEndListener {
                 state = State.Expanded
             }
-            TransitionManager.beginDelayedTransition(this, transition)
+            TransitionManager.beginDelayedTransition(animationSceneRoot ?: this, transition)
         }
         expandedSet.applyTo(this)
     }
