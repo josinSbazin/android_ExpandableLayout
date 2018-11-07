@@ -115,7 +115,7 @@ class ConstraintExpandableLayout : ConstraintLayout {
     }
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.expandable_layout_expanded, this)
+        LayoutInflater.from(context).inflate(R.layout.expandable_layout, this)
         contentView = findViewById(R.id.evHolder)
         moreTextView = findViewById(R.id.evMoreText)
         moreImageView = findViewById(R.id.evMoreImage)
@@ -166,13 +166,22 @@ class ConstraintExpandableLayout : ConstraintLayout {
 
         }
 
-        expandedSet = ConstraintSet().apply { clone(this) }
+        expandedSet = ConstraintSet().apply {
+            clone(context, R.layout.expandable_layout_expanded)
+        }
         collapsedSet = ConstraintSet().apply {
             clone(context, R.layout.expandable_layout_collapsed)
             constrainHeight(R.id.evHolder, collapsedHeight)
         }
 
         typedArray.recycle()
+
+        moreTextView.setOnClickListener { toggle() }
+        moreImageView.setOnClickListener { toggle() }
+
+        post {
+            updateState(state)
+        }
     }
 
     private fun createTransitionSet(animationDuration: Long) = TransitionSet().apply {
@@ -190,23 +199,33 @@ class ConstraintExpandableLayout : ConstraintLayout {
 
     private fun updateState(restoredState: State) {
         when (restoredState) {
-            State.Collapsed, State.Collapsing -> collapse(withAnimation = false)
-            State.Expanded, State.Expanding -> expand(withAnimation = false)
+            State.Collapsed, State.Collapsing -> collapse(withAnimation = false, forced = true)
+            State.Expanded, State.Expanding -> expand(withAnimation = false, forced = true)
             State.Statical -> makeStatic()
         }
     }
 
-    private fun collapse(withAnimation: Boolean = true) {
-        if (state == State.Collapsed || state == State.Expanding || state == State.Collapsing) return
+    private fun collapse(withAnimation: Boolean = true, forced: Boolean = false) {
+        if (!forced && (state == State.Collapsed || state == State.Expanding || state == State.Collapsing)) {
+            return
+        }
         if (withAnimation) {
+            state = State.Collapsing
+            transition.setOnEndListener {
+                state = State.Collapsed
+            }
             TransitionManager.beginDelayedTransition(this, transition)
         }
         collapsedSet.applyTo(this)
     }
 
-    private fun expand(withAnimation: Boolean = true) {
-        if (state == State.Expanded || state == State.Expanding || state == State.Collapsing) return
+    private fun expand(withAnimation: Boolean = true, forced: Boolean = false) {
+        if (!forced && (state == State.Expanded || state == State.Expanding || state == State.Collapsing)) return
         if (withAnimation) {
+            state = State.Expanding
+            transition.setOnEndListener {
+                state = State.Expanded
+            }
             TransitionManager.beginDelayedTransition(this, transition)
         }
         expandedSet.applyTo(this)
@@ -214,6 +233,14 @@ class ConstraintExpandableLayout : ConstraintLayout {
 
     private fun makeStatic() {
         //todo
+    }
+
+    private fun toggle() {
+        when (state) {
+            State.Collapsed, State.Collapsing -> expand()
+            State.Expanded, State.Expanding -> collapse()
+            else -> return
+        }
     }
 
     //endregion
