@@ -12,6 +12,7 @@ import android.support.transition.TransitionManager
 import android.support.transition.TransitionSet
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -48,18 +49,28 @@ class ConstraintExpandableLayout : ConstraintLayout {
     var onStateChangeListener: ((oldState: State, newState: State) -> Unit)? = null
 
     /**
-     * Collapsed height of view
+     * Collapsed height of view. WARNING! Don't set [collapsedHeight] less, then maximum height of wrapped view
      */
     var collapsedHeight = context.resources.getDimensionPixelSize(R.dimen.default_collapsed_height)
+        set(value) {
+            doOnGlobalLayout {
+                val maxHeight = contentView.getLayoutMaxHeight()
+                if (value > maxHeight) {
+                    throw IllegalArgumentException("CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight")
+                }
+            }
+
+            collapsedSet.constrainHeight(R.id.evHolder, value)
+            field = value
+        }
 
     /**
      * Height of shadow when layout is collapsed
      */
     var shadowHeight = context.resources.getDimensionPixelSize(R.dimen.default_shadow_height)
         set(value) {
-            val layoutParams = shadow.layoutParams
-            layoutParams.height = value
-            shadow.layoutParams = layoutParams
+            collapsedSet.constrainHeight(R.id.evShadow, value)
+            expandedSet.constrainHeight(R.id.evShadow, value)
             field = value
         }
 
@@ -68,7 +79,12 @@ class ConstraintExpandableLayout : ConstraintLayout {
      */
     var showShadow = DEFAULT_SHOW_SHADOW_VALUE
         set(value) {
-            shadow.visibility = if (showShadow) View.VISIBLE else View.INVISIBLE
+            val visibility = if (value) {
+                View.VISIBLE
+            } else {
+                View.INVISIBLE
+            }
+            collapsedSet.setVisibility(R.id.evShadow, visibility)
             field = value
         }
 
@@ -98,7 +114,7 @@ class ConstraintExpandableLayout : ConstraintLayout {
     @ColorInt
     var moreColor = ContextCompat.getColor(context, R.color.defaultMoreColor)
         set(value) {
-            setupMoreColor(moreColor)
+            setupMoreColor(value)
             field = value
         }
 
@@ -137,15 +153,24 @@ class ConstraintExpandableLayout : ConstraintLayout {
         val typedArray =
             context.obtainStyledAttributes(attrs, R.styleable.ConstraintExpandableLayout, defStyleAttr, defStyleRes)
 
+        expandedSet = ConstraintSet().apply {
+            clone(context, R.layout.expandable_layout_expanded)
+        }
+        collapsedSet = ConstraintSet().apply {
+            clone(context, R.layout.expandable_layout_collapsed)
+        }
+
         typedArray.apply {
             collapsedHeight = getDimensionPixelSize(
                 R.styleable.ConstraintExpandableLayout_el_collapsedHeight,
                 context.resources.getDimensionPixelSize(R.dimen.default_collapsed_height)
             )
+
             shadowHeight = getDimensionPixelSize(
                 R.styleable.ConstraintExpandableLayout_el_shadowHeight,
                 context.resources.getDimensionPixelSize(R.dimen.default_shadow_height)
             )
+
             showShadow = getBoolean(R.styleable.ConstraintExpandableLayout_el_showShadow, DEFAULT_SHOW_SHADOW_VALUE)
 
             val moreTextStyleable = getText(R.styleable.ConstraintExpandableLayout_el_moreText)
@@ -158,20 +183,13 @@ class ConstraintExpandableLayout : ConstraintLayout {
                         R.styleable.ConstraintExpandableLayout_el_animationDuration,
                         context.resources.getInteger(R.integer.default_animation_duration)
                     )
+
             moreColor = getColor(
                 R.styleable.ConstraintExpandableLayout_el_moreColor,
                 ContextCompat.getColor(context, R.color.defaultMoreColor)
             )
+
             state = State.values()[getInt(R.styleable.ConstraintExpandableLayout_el_initialState, DEFAULT_STATE)]
-
-        }
-
-        expandedSet = ConstraintSet().apply {
-            clone(context, R.layout.expandable_layout_expanded)
-        }
-        collapsedSet = ConstraintSet().apply {
-            clone(context, R.layout.expandable_layout_collapsed)
-            constrainHeight(R.id.evHolder, collapsedHeight)
         }
 
         typedArray.recycle()
@@ -197,11 +215,21 @@ class ConstraintExpandableLayout : ConstraintLayout {
         DrawableCompat.setTint(moreImageView.drawable, color)
     }
 
-    private fun updateState(restoredState: State) {
-        when (restoredState) {
+    private fun update(restoredState: SavedState) {
+        updateState(restoredState.state)
+        collapsedHeight = restoredState.collapsedHeight
+        shadowHeight = restoredState.shadowHeight
+        showShadow = restoredState.showShadow
+        animationDuration = restoredState.animationDuration
+        moreColor = restoredState.moreColor
+        moreText = restoredState.moreText
+    }
+
+    private fun updateState(state: State) {
+        when (state) {
             State.Collapsed, State.Collapsing -> collapse(withAnimation = false, forced = true)
             State.Expanded, State.Expanding -> expand(withAnimation = false, forced = true)
-            State.Statical -> makeStatic()
+            State.Statical -> makeStatical()
         }
     }
 
@@ -231,8 +259,8 @@ class ConstraintExpandableLayout : ConstraintLayout {
         expandedSet.applyTo(this)
     }
 
-    private fun makeStatic() {
-        //todo
+    private fun makeStatical() {
+        state = State.Statical
     }
 
     private fun toggle() {
@@ -249,30 +277,52 @@ class ConstraintExpandableLayout : ConstraintLayout {
 
     override fun onSaveInstanceState(): Parcelable = SavedState(super.onSaveInstanceState()).apply {
         state = this@ConstraintExpandableLayout.state
+        collapsedHeight = this@ConstraintExpandableLayout.collapsedHeight
+        shadowHeight = this@ConstraintExpandableLayout.shadowHeight
+        showShadow = this@ConstraintExpandableLayout.showShadow
+        animationDuration = this@ConstraintExpandableLayout.animationDuration
+        moreColor = this@ConstraintExpandableLayout.moreColor
+        moreText = this@ConstraintExpandableLayout.moreText
     }
 
     override fun onRestoreInstanceState(state: Parcelable) {
         val ss = state as SavedState
         super.onRestoreInstanceState(state.superState)
 
-        // Expanding ETV when it is not yet shown may yield NPE
-        // Therefore we should delay its call
         post {
-            updateState(restoredState = ss.state)
+            update(restoredState = ss)
         }
     }
 
     private class SavedState : BaseSavedState {
         var state: State = State.Collapsed
+        var collapsedHeight: Int = -1
+        var shadowHeight: Int = -1
+        var animationDuration: Int = -1
+        var moreColor: Int = -1
+        var showShadow: Boolean = false
+        var moreText: CharSequence = ""
 
         constructor(superState: Parcelable?) : super(superState)
         constructor(source: Parcel) : super(source) {
             state = State.values()[source.readInt()]
+            collapsedHeight = source.readInt()
+            shadowHeight = source.readInt()
+            animationDuration = source.readInt()
+            moreColor = source.readInt()
+            showShadow = source.readInt() == 1
+            moreText = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(source)
         }
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
             super.writeToParcel(dest, flags)
             dest.writeInt(state.ordinal)
+            dest.writeInt(collapsedHeight)
+            dest.writeInt(shadowHeight)
+            dest.writeInt(animationDuration)
+            dest.writeInt(moreColor)
+            dest.writeInt(if (showShadow) 1 else 0)
+            TextUtils.writeToParcel(moreText, dest, flags)
         }
 
         companion object {
