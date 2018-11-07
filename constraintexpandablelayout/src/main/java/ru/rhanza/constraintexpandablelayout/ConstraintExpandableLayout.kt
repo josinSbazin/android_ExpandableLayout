@@ -153,6 +153,11 @@ class ConstraintExpandableLayout : ConstraintLayout {
         }
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        clearCached()
+    }
+
     //region Private Methods
 
     private fun init(attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0) {
@@ -206,6 +211,10 @@ class ConstraintExpandableLayout : ConstraintLayout {
         post {
             updateState(state)
         }
+    }
+
+    private fun clearCached() {
+        animationSceneRoot = null
     }
 
     private fun createTransitionSet(animationDuration: Long) = TransitionSet().apply {
