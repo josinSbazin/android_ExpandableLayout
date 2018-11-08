@@ -8,7 +8,7 @@ Use ConstraintSet for animate changed.
 The library also handles configuration changes, so that the view remains
 expanded/collapsed on configuration change.
 
-![Demo](https://github.com/josinSbazin/pics/blob/master/expandable.gif?raw=true)
+![Demo](https://github.com/josinSbazin/pics/blob/master/expandable1.gif)
 
 ## Getting Started
 
