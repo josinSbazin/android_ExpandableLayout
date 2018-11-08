@@ -16,15 +16,15 @@ expanded/collapsed on configuration change.
 
 ```groovy
 allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+   repositories {
+      ...
+      maven { url 'https://jitpack.io' }
+   }
+} 
 ```
 2. Add the dependency:
 ```groovy
 dependencies {
-	        implementation 'com.github.josinSbazin:android_ExpandableLayout:0.1'
-	}
+   implementation 'com.github.josinSbazin:android_ExpandableLayout:0.1'
+}
 ```
