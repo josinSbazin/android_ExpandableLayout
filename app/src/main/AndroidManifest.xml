@@ -18,6 +18,18 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+                android:name=".XmlSampleActivity"
+                android:launchMode="singleInstance">
+        </activity>
+        <activity
+                android:name=".ProgrammaticallySampleActivity"
+                android:launchMode="singleInstance">
+        </activity>
+        <activity
+                android:name=".TransitionParentActivity"
+                android:launchMode="singleInstance">
+        </activity>
     </application>
 
 </manifest>

@@ -3,8 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'maven'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.josinSbazin'
-
+group = 'com.github.josinSbazin'
 
 android {
     compileSdkVersion 28
@@ -39,7 +38,7 @@ task sourcesJar(type: Jar) {
 }
 
 task javadoc(type: Javadoc) {
-    failOnError  false
+    failOnError false
     source = android.sourceSets.main.java.sourceFiles
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     classpath += configurations.compile

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="ConstraintExpandableLayout">
+    <declare-styleable name="ExpandableLayout">
         <attr name="el_collapsedHeight" format="dimension"/>
         <attr name="el_showShadow" format="boolean"/>
         <attr name="el_shadowHeight" format="dimension"/>
+        <attr name="el_hideButton" format="boolean"/>
         <attr name="el_moreText" format="string"/>
         <attr name="el_animationDuration" format="integer"/>
         <attr name="el_moreColor" format="color"/>

@@ -25,4 +25,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$supportLibrary_version"
     implementation project(':constraintexpandablelayout')
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }
