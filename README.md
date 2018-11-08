@@ -28,3 +28,83 @@ dependencies {
    implementation 'com.github.josinSbazin:android_ExpandableLayout:0.1'
 }
 ```
+
+## Usage
+
+1. Define the `el_collapsedHeight` xml attribute (`setCollapsedHeight(int height)` method in Java or `collapsedHeight` property in Kotlin) to set the height of view in collapsed state.
+2. Provide unique `id` so that library could restore its state after configuration change.
+
+Then use `ExpandableLayout` with any other nested views
+
+Xml snippet:
+```xml
+<ru.rhanza.constraintexpandablelayout.ExpandableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:el_animationDuration="100"
+        app:el_initialState="collapsed"
+        app:el_collapsedHeight="200dp"
+        app:el_moreText="Expand/Collapse"
+        app:el_shadowHeight="60dp"
+        app:el_showShadow="true"
+        app:el_hideButton="false"
+        app:el_moreColor="@android:color/black"
+        >
+
+   ...
+
+</ru.rhanza.constraintexpandablelayout.ExpandableLayout>
+```
+
+You can setup this layout programmarically:
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_programmatically_sample)
+        //You can setup ConstraintExpandableLayout programmatically
+        content.hideButton = true
+        content.showShadow = true
+        content.animationDuration = 300
+        content.collapsedHeight = 120
+        button.setOnClickListener { content.toggle() }
+    }
+```
+
+Available xml attributes:
+```xml
+        app:el_collapsedHeight="200dp"
+        app:el_showShadow="true"
+        app:el_shadowHeight="60dp"
+        app:el_hideButton="false"
+        app:el_moreText="Expand/Collapse"
+        app:el_animationDuration="100"
+        app:el_moreColor="@android:color/black
+        app:el_initialState="collapsed" --available states (collapsed, expanded, statical)
+```
+
+Available public methods and properties:
+*   **state: State** -  Current `State` of this `ExpandableLayout`. Read-only property. `State.Statical` by default.
+*   **onStateChangeListener: ((oldState: State, newState: State) -> Unit)?** - Invoke when `State` changed.
+*   **collapsedHeight: Int** - Collapsed height in pixels of view. WARNING! Don't set [collapsedHeight] less, then maximum height of wrapped view.
+*   **shadowHeight: Int** - Height of shadow in pixels when layout is collapsed.
+*   **showShadow: Boolean** - If this parameter is true - show shadow in collapsed 'State'.
+*   **hideButton: Boolean** - Hide default collapse/expand button. Use if you want make custom button.
+*   **moreText: CharSequence** - Text showing on more button.
+*   **animationDuration: Int** - Duration of animation of collapse/expand. In milliseconds.
+*   **@ColorInt moreColor: Int** - Color of more button (text and arrow).
+*   **animationSceneRoot: ViewGroup** - Animation scene root for transition. Use for animate container for this view.  
+Do not save when `ExpandableLayout` paralyzed. Set it manually when restore.  
+Default is parent of this view, or self if parent is invalid
+
+*   **fun toggle(withAnimation: Boolean = true)** - Toggle `ExpandableLayout` state. Ignore if `State.Statical`.  
+`withAnimation` should it toggle with animation or instantaneously. **true** by default.
+*   **fun collapse(withAnimation: Boolean = true, forced: Boolean = false)** -  Collapse `ExpandableLayout`. Ignore if `State.Statical`. 
+`withAnimation` should it collapse with animation or instantaneously. **false** by default.  
+`withAnimation` should it collapse in any state forced. **true** by default.
+*   **fun expand(withAnimation: Boolean = true, forced: Boolean = false)** -  Expand `ExpandableLayout`. Ignore if `State.Statical`. 
+`withAnimation` should it expand with animation or instantaneously. **false** by default.  
+`withAnimation` should it expand in any state forced. **true** by default.
