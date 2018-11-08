@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ru.rhanza.constraintexpandablelayout.ExpandableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:el_animationDuration="300"
+        app:el_collapsedHeight="200dp"
+        app:el_moreText="Expand/Collapse"
+        app:el_shadowHeight="60dp"
+        app:el_showShadow="true"
+        app:el_hideButton="false"
+        app:el_moreColor="@android:color/black"
+        >
+
+    <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="20sp"
+            tools:ignore="HardcodedText"
+            />
+
+</ru.rhanza.constraintexpandablelayout.ExpandableLayout>
