@@ -59,8 +59,10 @@ class ExpandableLayout : ConstraintLayout {
                     throw IllegalArgumentException("CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight")
                 }
             }
-            contentView.layoutParams.height = value
-            shadow.requestLayout()
+            if (state == State.Collapsed) {
+                contentView.layoutParams.height = value
+                shadow.requestLayout()
+            }
             collapsedSet.constrainHeight(R.id.evHolder, value)
             field = value
         }
