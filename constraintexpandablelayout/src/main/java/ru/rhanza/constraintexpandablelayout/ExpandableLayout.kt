@@ -49,7 +49,7 @@ class ExpandableLayout : ConstraintLayout {
     var onStateChangeListener: ((oldState: State, newState: State) -> Unit)? = null
 
     /**
-     * Collapsed height of view. WARNING! Don't set [collapsedHeight] less, then maximum height of wrapped view
+     * Collapsed height in pixels of view. WARNING! Don't set [collapsedHeight] less, then maximum height of wrapped view
      */
     var collapsedHeight = context.resources.getDimensionPixelSize(R.dimen.default_collapsed_height)
         set(value) {
@@ -68,7 +68,7 @@ class ExpandableLayout : ConstraintLayout {
         }
 
     /**
-     * Height of shadow when layout is collapsed
+     * Height of shadow in pixels when layout is collapsed
      */
     var shadowHeight = context.resources.getDimensionPixelSize(R.dimen.default_shadow_height)
         set(value) {
