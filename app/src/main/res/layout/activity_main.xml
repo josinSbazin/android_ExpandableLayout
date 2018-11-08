@@ -6,6 +6,7 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/transparent"
         app:el_animationDuration="100"
         app:el_collapsedHeight="200dp"
         app:el_moreText="Expand/Collapse"
