@@ -38,10 +38,8 @@ class ExpandableLayout : ConstraintLayout {
     /** Current [State] of this [ExpandableLayout]. Read-only property. [State.Statical] by default. */
     var state = State.Statical
         private set(value) {
-            if (field != value) {
-                onStateChangeListener?.invoke(field, value)
-                field = value
-            }
+            onStateChangeListener?.invoke(field, value)
+            field = value
         }
 
     /**
@@ -134,7 +132,7 @@ class ExpandableLayout : ConstraintLayout {
      */
     var animationDuration = context.resources.getInteger(R.integer.default_animation_duration)
         set(value) {
-            if (!isInEditMode && field != value) {
+            if (!isInEditMode) {
                 transition = createTransitionSet(value.toLong())
             }
             field = value
