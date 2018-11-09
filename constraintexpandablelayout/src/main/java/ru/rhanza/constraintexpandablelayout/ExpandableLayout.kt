@@ -63,7 +63,7 @@ class ExpandableLayout : ConstraintLayout {
             }
             if (state == State.Collapsed) {
                 contentView.layoutParams.height = value
-                shadow.requestLayout()
+                contentView.requestLayout()
             }
             collapsedSet.constrainHeight(R.id.evHolder, value)
             field = value
@@ -100,12 +100,12 @@ class ExpandableLayout : ConstraintLayout {
      * Hide default collapse/expand button. Use if you want make custom button
      */
 
-    var hideButton = DEFAULT_HIDE_BUTTON_VALUE
+    var showButton = DEFAULT_HIDE_BUTTON_VALUE
         set(value) {
             val visibility = if (value) {
-                View.GONE
-            } else {
                 View.VISIBLE
+            } else {
+                View.GONE
             }
 
             moreImageView.visibility = visibility
@@ -270,7 +270,7 @@ class ExpandableLayout : ConstraintLayout {
 
             showShadow = getBoolean(R.styleable.ExpandableLayout_el_showShadow, DEFAULT_SHOW_SHADOW_VALUE)
 
-            hideButton = getBoolean(R.styleable.ExpandableLayout_el_hideButton, DEFAULT_HIDE_BUTTON_VALUE)
+            showButton = getBoolean(R.styleable.ExpandableLayout_el_hideButton, DEFAULT_HIDE_BUTTON_VALUE)
 
             val moreTextStyleable = getText(R.styleable.ExpandableLayout_el_moreText)
             if (moreTextStyleable != null) {
@@ -322,7 +322,7 @@ class ExpandableLayout : ConstraintLayout {
         collapsedHeight = restoredState.collapsedHeight
         shadowHeight = restoredState.shadowHeight
         showShadow = restoredState.showShadow
-        hideButton = restoredState.hideButton
+        showButton = restoredState.showButton
         animationDuration = restoredState.animationDuration
         moreColor = restoredState.moreColor
         moreText = restoredState.moreText
@@ -351,7 +351,7 @@ class ExpandableLayout : ConstraintLayout {
         collapsedHeight = this@ExpandableLayout.collapsedHeight
         shadowHeight = this@ExpandableLayout.shadowHeight
         showShadow = this@ExpandableLayout.showShadow
-        hideButton = this@ExpandableLayout.hideButton
+        showButton = this@ExpandableLayout.showButton
         animationDuration = this@ExpandableLayout.animationDuration
         moreColor = this@ExpandableLayout.moreColor
         moreText = this@ExpandableLayout.moreText
@@ -372,7 +372,7 @@ class ExpandableLayout : ConstraintLayout {
         var shadowHeight: Int = -1
         var animationDuration: Int = -1
         var moreColor: Int = -1
-        var hideButton: Boolean = false
+        var showButton: Boolean = true
         var showShadow: Boolean = false
         var moreText: CharSequence = ""
 
@@ -383,7 +383,7 @@ class ExpandableLayout : ConstraintLayout {
             shadowHeight = source.readInt()
             animationDuration = source.readInt()
             moreColor = source.readInt()
-            hideButton = source.readInt() == 1
+            showButton = source.readInt() == 1
             showShadow = source.readInt() == 1
             moreText = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(source)
         }
@@ -395,7 +395,7 @@ class ExpandableLayout : ConstraintLayout {
             dest.writeInt(shadowHeight)
             dest.writeInt(animationDuration)
             dest.writeInt(moreColor)
-            dest.writeInt(if (hideButton) 1 else 0)
+            dest.writeInt(if (showButton) 1 else 0)
             dest.writeInt(if (showShadow) 1 else 0)
             TextUtils.writeToParcel(moreText, dest, flags)
         }
@@ -415,8 +415,8 @@ class ExpandableLayout : ConstraintLayout {
     companion object {
         private const val LOG_TAG = "rhanza.ExpandableLayout"
 
-        private const val DEFAULT_SHOW_SHADOW_VALUE = false
-        private const val DEFAULT_HIDE_BUTTON_VALUE = false
+        private const val DEFAULT_SHOW_SHADOW_VALUE = true
+        private const val DEFAULT_HIDE_BUTTON_VALUE = true
         private const val DEFAULT_STATE = 0
     }
 }
