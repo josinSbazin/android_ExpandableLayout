@@ -11,7 +11,7 @@
         app:el_moreText="Expand/Collapse"
         app:el_shadowHeight="60dp"
         app:el_showShadow="true"
-        app:el_hideButton="false"
+        app:el_showButton="true"
         app:el_moreColor="@android:color/black"
         >
 

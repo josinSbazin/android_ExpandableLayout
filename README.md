@@ -50,7 +50,7 @@ Xml snippet:
         app:el_moreText="Expand/Collapse"
         app:el_shadowHeight="60dp"
         app:el_showShadow="true"
-        app:el_hideButton="false"
+        app:el_showButton="true"
         app:el_moreColor="@android:color/black"
         >
 
@@ -65,7 +65,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_programmatically_sample)
         //You can setup ConstraintExpandableLayout programmatically
-        content.hideButton = true
+        content.showButton = false
         content.showShadow = true
         content.animationDuration = 300
         content.collapsedHeight = 120
@@ -78,7 +78,7 @@ Available xml attributes:
         app:el_collapsedHeight="200dp"
         app:el_showShadow="true"
         app:el_shadowHeight="60dp"
-        app:el_hideButton="false"
+        app:el_showButton="true"
         app:el_moreText="Expand/Collapse"
         app:el_animationDuration="100"
         app:el_moreColor="@android:color/black
@@ -91,7 +91,7 @@ Available public methods and properties:
 *   **collapsedHeight: Int** - Collapsed height in pixels of view. WARNING! Don't set [collapsedHeight] less, then maximum height of wrapped view.
 *   **shadowHeight: Int** - Height of shadow in pixels when layout is collapsed.
 *   **showShadow: Boolean** - If this parameter is true - show shadow in collapsed 'State'.
-*   **hideButton: Boolean** - Hide default collapse/expand button. Use if you want make custom button.
+*   **showButton: Boolean** - Show default collapse/expand button. Use if you want make custom button.
 *   **moreText: CharSequence** - Text showing on more button.
 *   **animationDuration: Int** - Duration of animation of collapse/expand. In milliseconds.
 *   **@ColorInt moreColor: Int** - Color of more button (text and arrow).

@@ -97,7 +97,7 @@ class ExpandableLayout : ConstraintLayout {
         }
 
     /**
-     * Hide default collapse/expand button. Use if you want make custom button
+     * Show default collapse/expand button. Use if you want make custom button
      */
 
     var showButton = DEFAULT_HIDE_BUTTON_VALUE
@@ -270,7 +270,7 @@ class ExpandableLayout : ConstraintLayout {
 
             showShadow = getBoolean(R.styleable.ExpandableLayout_el_showShadow, DEFAULT_SHOW_SHADOW_VALUE)
 
-            showButton = getBoolean(R.styleable.ExpandableLayout_el_hideButton, DEFAULT_HIDE_BUTTON_VALUE)
+            showButton = getBoolean(R.styleable.ExpandableLayout_el_showButton, DEFAULT_HIDE_BUTTON_VALUE)
 
             val moreTextStyleable = getText(R.styleable.ExpandableLayout_el_moreText)
             if (moreTextStyleable != null) {
