@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +57,10 @@ class ExpandableLayout : ConstraintLayout {
             doOnGlobalLayout {
                 val maxHeight = contentView.getLayoutMaxHeight()
                 if (value > maxHeight) {
-                    throw IllegalArgumentException("CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight")
+                    Log.w(
+                        LOG_TAG,
+                        "CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight"
+                    )
                 }
             }
             if (state == State.Collapsed) {
@@ -407,6 +411,8 @@ class ExpandableLayout : ConstraintLayout {
     //endregion
 
     companion object {
+        private const val LOG_TAG = "rhanza.ExpandableLayout"
+
         private const val DEFAULT_SHOW_SHADOW_VALUE = false
         private const val DEFAULT_HIDE_BUTTON_VALUE = false
         private const val DEFAULT_STATE = 0
