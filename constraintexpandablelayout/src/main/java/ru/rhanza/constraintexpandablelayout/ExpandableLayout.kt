@@ -183,6 +183,8 @@ class ExpandableLayout : ConstraintLayout {
             }
             val parent = animationSceneRoot ?: this.parent as? ViewGroup ?: this
             TransitionManager.beginDelayedTransition(parent, transition)
+        } else {
+            state = State.Collapsed
         }
         collapsedSet.applyTo(this)
     }
@@ -201,6 +203,8 @@ class ExpandableLayout : ConstraintLayout {
             }
             val parent = animationSceneRoot ?: this.parent as? ViewGroup ?: this
             TransitionManager.beginDelayedTransition(parent, transition)
+        } else {
+            state = State.Expanded
         }
         expandedSet.applyTo(this)
     }
