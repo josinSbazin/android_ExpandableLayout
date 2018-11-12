@@ -32,6 +32,7 @@ class ExpandableLayout : ConstraintLayout {
 
     private lateinit var collapsedSet: ConstraintSet
     private lateinit var expandedSet: ConstraintSet
+    private lateinit var staticalSet: ConstraintSet
 
     private lateinit var transition: TransitionSet
 
@@ -59,6 +60,7 @@ class ExpandableLayout : ConstraintLayout {
                         LOG_TAG,
                         "CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight"
                     )
+                    makeStatical()
                 }
             }
             if (state == State.Collapsed) {
@@ -267,6 +269,11 @@ class ExpandableLayout : ConstraintLayout {
         collapsedSet = ConstraintSet().apply {
             clone(context, R.layout.expandable_layout_collapsed)
         }
+        staticalSet = ConstraintSet().apply {
+            clone(context, R.layout.expandable_layout_expanded)
+            setVisibility(R.id.evMoreText, View.GONE)
+            setVisibility(R.id.evMoreImage, View.GONE)
+        }
 
         typedArray.apply {
             collapsedHeight = getDimensionPixelSize(
@@ -352,7 +359,7 @@ class ExpandableLayout : ConstraintLayout {
     }
 
     private fun makeStatical() {
-        expandedSet.applyTo(this)
+        staticalSet.applyTo(this)
         state = State.Statical
     }
 
