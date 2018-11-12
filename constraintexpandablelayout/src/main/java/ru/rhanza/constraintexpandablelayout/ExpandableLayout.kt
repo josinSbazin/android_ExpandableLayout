@@ -214,18 +214,7 @@ class ExpandableLayout : ConstraintLayout {
      * @param [withAnimation] should it collapse in any state forced. **true** by default.
      */
     fun collapse(withAnimation: Boolean = true, forced: Boolean = false) {
-        if (!forced
-            && (state == State.Collapsed || state == State.Expanding || state == State.Collapsing)
-        ) {
-            return
-        }
-
-        doOnGlobalLayout {
-            if (checkStatical(collapsedHeight)) {
-                makeStatical()
-                return@doOnGlobalLayout
-            }
-
+        if (forced || state == State.Expanded) {
             if (withAnimation) {
                 state = State.Collapsing
                 transition.setOnEndListener {
@@ -246,16 +235,7 @@ class ExpandableLayout : ConstraintLayout {
      * @param [withAnimation] should it expand in any state forced. **true** by default.
      */
     fun expand(withAnimation: Boolean = true, forced: Boolean = false) {
-        if (!forced
-            && (state == State.Expanded || state == State.Expanding || state == State.Collapsing)
-        ) {
-            return
-        }
-        doOnGlobalLayout {
-            if (checkStatical(collapsedHeight)) {
-                makeStatical()
-                return@doOnGlobalLayout
-            }
+        if (forced || state == State.Collapsed) {
             if (withAnimation) {
                 state = State.Expanding
                 transition.setOnEndListener {
@@ -267,6 +247,36 @@ class ExpandableLayout : ConstraintLayout {
                 state = State.Expanded
             }
             expandedSet.applyTo(this)
+        }
+    }
+
+    /**
+     * Invalidate state when dynamically changing content.
+     * @param [state] the state that the view will take at the correct [collapsedHeight].
+     */
+    fun invalidateState(state: State) {
+        when (state) {
+            State.Collapsed, State.Collapsing -> {
+                doOnGlobalLayout {
+                    if (checkStatical(collapsedHeight)) {
+                        makeStatical()
+                    } else {
+                        collapse(false, true)
+                    }
+                }
+            }
+            State.Expanded, State.Expanding -> {
+                doOnGlobalLayout {
+                    if (checkStatical(collapsedHeight)) {
+                        makeStatical()
+                    } else {
+                        expand(false, true)
+                    }
+                }
+            }
+            State.Statical -> {
+                makeStatical()
+            }
         }
     }
 
