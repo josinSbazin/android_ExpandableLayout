@@ -9,6 +9,5 @@ class XmlSampleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         //You can setup ConstraintExpandableLayout in xml
         setContentView(R.layout.activity_xml_sample)
-
     }
 }
