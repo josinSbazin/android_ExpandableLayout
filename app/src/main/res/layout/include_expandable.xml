@@ -14,6 +14,8 @@
         app:el_showButton="true"
         app:el_moreColor="@android:color/black"
         >
+    <!--you can use xml for set animation scene root view-->
+    <!--app:el_animationSceneRoot="@+id/container"-->
 
     <TextView
             android:id="@+id/text"

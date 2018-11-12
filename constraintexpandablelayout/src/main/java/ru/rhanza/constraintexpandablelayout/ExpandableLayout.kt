@@ -148,12 +148,23 @@ class ExpandableLayout : ConstraintLayout {
             field = value
         }
 
+
+    private var animationSceneRootViewGroup: ViewGroup? = null
+
     /**
-     * Animation scene root for transition. Use for animate container for this view.
-     * Do not save when [ExpandableLayout] paralyzed. Set it manually when restore.
-     * Default is parent of this view, or self if parent is invalid
+     * Animation scene root id for transition. Use for animate container for this view.
+     * Default is self.
      */
-    var animationSceneRoot: ViewGroup? = null
+    var animationSceneRootId: Int = NO_ID
+        set(value) {
+            if (value == NO_ID) {
+                animationSceneRootViewGroup = null
+            } else {
+                doOnGlobalLayout {
+                    animationSceneRootViewGroup = findParentRecursively(value) as? ViewGroup
+                }
+            }
+        }
 
     /**
      * Toggle [ExpandableLayout] state. Ignore if [State.Statical]
@@ -181,7 +192,7 @@ class ExpandableLayout : ConstraintLayout {
             transition.setOnEndListener {
                 state = State.Collapsed
             }
-            val parent = animationSceneRoot ?: this.parent as? ViewGroup ?: this
+            val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
             TransitionManager.beginDelayedTransition(parent, transition)
         } else {
             state = State.Collapsed
@@ -201,7 +212,7 @@ class ExpandableLayout : ConstraintLayout {
             transition.setOnEndListener {
                 state = State.Expanded
             }
-            val parent = animationSceneRoot ?: this.parent as? ViewGroup ?: this
+            val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
             TransitionManager.beginDelayedTransition(parent, transition)
         } else {
             state = State.Expanded
@@ -288,6 +299,9 @@ class ExpandableLayout : ConstraintLayout {
                 ContextCompat.getColor(context, R.color.defaultMoreColor)
             )
 
+            val rootId = getResourceId(R.styleable.ExpandableLayout_el_animationSceneRoot, NO_ID)
+            animationSceneRootId = rootId
+
             state = State.values()[getInt(R.styleable.ExpandableLayout_el_initialState, DEFAULT_STATE)]
         }
 
@@ -302,7 +316,7 @@ class ExpandableLayout : ConstraintLayout {
     }
 
     private fun clearCached() {
-        animationSceneRoot = null
+        animationSceneRootViewGroup = null
     }
 
     private fun createTransitionSet(animationDuration: Long) = TransitionSet().apply {
@@ -370,6 +384,7 @@ class ExpandableLayout : ConstraintLayout {
         var state: State = State.Collapsed
         var collapsedHeight: Int = -1
         var shadowHeight: Int = -1
+        var animationRootId: Int = 0
         var animationDuration: Int = -1
         var moreColor: Int = -1
         var showButton: Boolean = true
@@ -381,6 +396,7 @@ class ExpandableLayout : ConstraintLayout {
             state = State.values()[source.readInt()]
             collapsedHeight = source.readInt()
             shadowHeight = source.readInt()
+            animationRootId = source.readInt()
             animationDuration = source.readInt()
             moreColor = source.readInt()
             showButton = source.readInt() == 1
@@ -393,6 +409,7 @@ class ExpandableLayout : ConstraintLayout {
             dest.writeInt(state.ordinal)
             dest.writeInt(collapsedHeight)
             dest.writeInt(shadowHeight)
+            dest.writeInt(animationRootId)
             dest.writeInt(animationDuration)
             dest.writeInt(moreColor)
             dest.writeInt(if (showButton) 1 else 0)
@@ -418,6 +435,7 @@ class ExpandableLayout : ConstraintLayout {
         private const val DEFAULT_SHOW_SHADOW_VALUE = true
         private const val DEFAULT_HIDE_BUTTON_VALUE = true
         private const val DEFAULT_STATE = 0
+        private const val NO_ID = 0
     }
 }
 
