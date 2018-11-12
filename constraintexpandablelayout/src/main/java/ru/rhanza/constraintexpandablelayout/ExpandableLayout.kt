@@ -36,6 +36,27 @@ class ExpandableLayout : ConstraintLayout {
 
     private lateinit var transition: TransitionSet
 
+    constructor(context: Context) : super(context) {
+        init()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init(attrs)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        init(attrs)
+    }
+
+    init {
+        LayoutInflater.from(context).inflate(R.layout.expandable_layout, this)
+        contentView = findViewById(R.id.evHolder)
+        moreTextView = findViewById(R.id.evMoreText)
+        moreImageView = findViewById(R.id.evMoreImage)
+        shadow = findViewById(R.id.evShadow)
+        dontInterceptAddView = false
+    }
+
     /** Current [State] of this [ExpandableLayout]. Read-only property. [State.Statical] by default. */
     var state = State.Statical
         private set(value) {
@@ -44,7 +65,7 @@ class ExpandableLayout : ConstraintLayout {
         }
 
     /**
-     * Invoke when [State] changed
+     * Invoke when [State] changed. After animation if animated
      */
     var onStateChangeListener: ((oldState: State, newState: State) -> Unit)? = null
 
@@ -220,28 +241,6 @@ class ExpandableLayout : ConstraintLayout {
             state = State.Expanded
         }
         expandedSet.applyTo(this)
-    }
-
-
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init(attrs)
-    }
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(attrs)
-    }
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.expandable_layout, this)
-        contentView = findViewById(R.id.evHolder)
-        moreTextView = findViewById(R.id.evMoreText)
-        moreImageView = findViewById(R.id.evMoreImage)
-        shadow = findViewById(R.id.evShadow)
-        dontInterceptAddView = false
     }
 
     override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {

@@ -86,6 +86,23 @@ Available xml attributes:
         app:el_animationSceneRoot="@+id/animationParentViewId"
 ```
 
+If the maximum height of the nested view is less than the collapsed height, then the view will take a static state.
+If you want to change the state at runtime (for example, filling content after loading), you can  you can use the 
+`collapse / expand` method with the parameter `forced` - true.
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //You can setup ConstraintExpandableLayout in xml
+        setContentView(R.layout.activity_xml_sample)
+
+        text.postDelayed({
+            text.text =
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            content.collapse(withAnimation = false, forced = true)
+        }, 100)
+    }
+```
+
 Available public methods and properties:
 *   **state: State** -  Current `State` of this `ExpandableLayout`. Read-only property. `State.Statical` by default.
 *   **onStateChangeListener: ((oldState: State, newState: State) -> Unit)?** - Invoke when `State` changed.
