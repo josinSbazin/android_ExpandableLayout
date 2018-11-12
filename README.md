@@ -83,6 +83,7 @@ Available xml attributes:
         app:el_animationDuration="100"
         app:el_moreColor="@android:color/black
         app:el_initialState="collapsed" --available states (collapsed, expanded, statical)
+        app:el_animationSceneRoot="@+id/animationParentViewId"
 ```
 
 Available public methods and properties:
@@ -95,9 +96,7 @@ Available public methods and properties:
 *   **moreText: CharSequence** - Text showing on more button.
 *   **animationDuration: Int** - Duration of animation of collapse/expand. In milliseconds.
 *   **@ColorInt moreColor: Int** - Color of more button (text and arrow).
-*   **animationSceneRoot: ViewGroup** - Animation scene root for transition. Use for animate container for this view.  
-Do not save when `ExpandableLayout` paralyzed. Set it manually when restore.  
-Default is parent of this view, or self if parent is invalid
+*   **animationSceneRootId: Int** - Animation scene root id for transition. Use for animate container for this view.  Default is self
 
 *   **fun toggle(withAnimation: Boolean = true)** - Toggle `ExpandableLayout` state. Ignore if `State.Statical`.  
 `withAnimation` should it toggle with animation or instantaneously. **true** by default.
