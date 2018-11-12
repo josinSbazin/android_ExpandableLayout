@@ -75,12 +75,7 @@ class ExpandableLayout : ConstraintLayout {
     var collapsedHeight = context.resources.getDimensionPixelSize(R.dimen.default_collapsed_height)
         set(value) {
             doOnGlobalLayout {
-                val maxHeight = contentView.getLayoutMaxHeight()
-                if (value > maxHeight) {
-                    Log.w(
-                        LOG_TAG,
-                        "CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight"
-                    )
+                if (checkStatical(value)) {
                     makeStatical()
                 }
             }
@@ -91,6 +86,18 @@ class ExpandableLayout : ConstraintLayout {
             collapsedSet.constrainHeight(R.id.evHolder, value)
             field = value
         }
+
+    private fun checkStatical(value: Int): Boolean {
+        val maxHeight = contentView.getLayoutMaxHeight()
+        if (value > maxHeight) {
+            Log.w(
+                LOG_TAG,
+                "CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight"
+            )
+            return true
+        }
+        return false
+    }
 
     /**
      * Height of shadow in pixels when layout is collapsed
@@ -207,9 +214,17 @@ class ExpandableLayout : ConstraintLayout {
      * @param [withAnimation] should it collapse in any state forced. **true** by default.
      */
     fun collapse(withAnimation: Boolean = true, forced: Boolean = false) {
-        if (!forced && (state == State.Collapsed || state == State.Expanding || state == State.Collapsing)) {
+        if (!forced
+            && (state == State.Collapsed || state == State.Expanding || state == State.Collapsing)
+        ) {
             return
         }
+
+        if (checkStatical(collapsedHeight)) {
+            makeStatical()
+            return
+        }
+
         if (withAnimation) {
             state = State.Collapsing
             transition.setOnEndListener {
@@ -229,7 +244,15 @@ class ExpandableLayout : ConstraintLayout {
      * @param [withAnimation] should it expand in any state forced. **true** by default.
      */
     fun expand(withAnimation: Boolean = true, forced: Boolean = false) {
-        if (!forced && (state == State.Expanded || state == State.Expanding || state == State.Collapsing)) return
+        if (!forced
+            && (state == State.Expanded || state == State.Expanding || state == State.Collapsing)
+        ) {
+            return
+        }
+        if (checkStatical(collapsedHeight)) {
+            makeStatical()
+            return
+        }
         if (withAnimation) {
             state = State.Expanding
             transition.setOnEndListener {
