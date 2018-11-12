@@ -220,22 +220,24 @@ class ExpandableLayout : ConstraintLayout {
             return
         }
 
-        if (checkStatical(collapsedHeight)) {
-            makeStatical()
-            return
-        }
+        doOnGlobalLayout {
+            if (checkStatical(collapsedHeight)) {
+                makeStatical()
+                return@doOnGlobalLayout
+            }
 
-        if (withAnimation) {
-            state = State.Collapsing
-            transition.setOnEndListener {
+            if (withAnimation) {
+                state = State.Collapsing
+                transition.setOnEndListener {
+                    state = State.Collapsed
+                }
+                val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
+                TransitionManager.beginDelayedTransition(parent, transition)
+            } else {
                 state = State.Collapsed
             }
-            val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
-            TransitionManager.beginDelayedTransition(parent, transition)
-        } else {
-            state = State.Collapsed
+            collapsedSet.applyTo(this)
         }
-        collapsedSet.applyTo(this)
     }
 
     /**
@@ -249,21 +251,23 @@ class ExpandableLayout : ConstraintLayout {
         ) {
             return
         }
-        if (checkStatical(collapsedHeight)) {
-            makeStatical()
-            return
-        }
-        if (withAnimation) {
-            state = State.Expanding
-            transition.setOnEndListener {
+        doOnGlobalLayout {
+            if (checkStatical(collapsedHeight)) {
+                makeStatical()
+                return@doOnGlobalLayout
+            }
+            if (withAnimation) {
+                state = State.Expanding
+                transition.setOnEndListener {
+                    state = State.Expanded
+                }
+                val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
+                TransitionManager.beginDelayedTransition(parent, transition)
+            } else {
                 state = State.Expanded
             }
-            val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
-            TransitionManager.beginDelayedTransition(parent, transition)
-        } else {
-            state = State.Expanded
+            expandedSet.applyTo(this)
         }
-        expandedSet.applyTo(this)
     }
 
     override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
