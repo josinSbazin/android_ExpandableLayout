@@ -12,8 +12,8 @@ class TransitionParentActivity : AppCompatActivity() {
         setContentView(R.layout.activity_transition_parent)
 
         //Use it for correct group animation relative to parent
-        (first as ExpandableLayout).animationSceneRoot = container
-        (second as ExpandableLayout).animationSceneRoot = container
-        (third as ExpandableLayout).animationSceneRoot = container
+        (first as ExpandableLayout).animationSceneRootId = container.id
+        (second as ExpandableLayout).animationSceneRootId = container.id
+        (third as ExpandableLayout).animationSceneRootId = container.id
     }
 }

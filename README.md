@@ -50,7 +50,7 @@ Xml snippet:
         app:el_moreText="Expand/Collapse"
         app:el_shadowHeight="60dp"
         app:el_showShadow="true"
-        app:el_hideButton="false"
+        app:el_showButton="true"
         app:el_moreColor="@android:color/black"
         >
 
@@ -65,7 +65,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_programmatically_sample)
         //You can setup ConstraintExpandableLayout programmatically
-        content.hideButton = true
+        content.showButton = false
         content.showShadow = true
         content.animationDuration = 300
         content.collapsedHeight = 120
@@ -78,11 +78,12 @@ Available xml attributes:
         app:el_collapsedHeight="200dp"
         app:el_showShadow="true"
         app:el_shadowHeight="60dp"
-        app:el_hideButton="false"
+        app:el_showButton="true"
         app:el_moreText="Expand/Collapse"
         app:el_animationDuration="100"
         app:el_moreColor="@android:color/black
         app:el_initialState="collapsed" --available states (collapsed, expanded, statical)
+        app:el_animationSceneRoot="@+id/animationParentViewId"
 ```
 
 Available public methods and properties:
@@ -91,13 +92,11 @@ Available public methods and properties:
 *   **collapsedHeight: Int** - Collapsed height in pixels of view. WARNING! Don't set [collapsedHeight] less, then maximum height of wrapped view.
 *   **shadowHeight: Int** - Height of shadow in pixels when layout is collapsed.
 *   **showShadow: Boolean** - If this parameter is true - show shadow in collapsed 'State'.
-*   **hideButton: Boolean** - Hide default collapse/expand button. Use if you want make custom button.
+*   **showButton: Boolean** - Show default collapse/expand button. Use if you want make custom button.
 *   **moreText: CharSequence** - Text showing on more button.
 *   **animationDuration: Int** - Duration of animation of collapse/expand. In milliseconds.
 *   **@ColorInt moreColor: Int** - Color of more button (text and arrow).
-*   **animationSceneRoot: ViewGroup** - Animation scene root for transition. Use for animate container for this view.  
-Do not save when `ExpandableLayout` paralyzed. Set it manually when restore.  
-Default is parent of this view, or self if parent is invalid
+*   **animationSceneRootId: Int** - Animation scene root id for transition. Use for animate container for this view.  Default is self
 
 *   **fun toggle(withAnimation: Boolean = true)** - Toggle `ExpandableLayout` state. Ignore if `State.Statical`.  
 `withAnimation` should it toggle with animation or instantaneously. **true** by default.

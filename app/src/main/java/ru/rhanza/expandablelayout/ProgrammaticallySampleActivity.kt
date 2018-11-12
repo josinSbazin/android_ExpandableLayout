@@ -9,7 +9,7 @@ class ProgrammaticallySampleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_programmatically_sample)
         //You can setup ConstraintExpandableLayout programmatically
-        content.hideButton = true
+        content.showButton = false
         content.showShadow = true
         content.animationDuration = 300
         content.collapsedHeight = 120

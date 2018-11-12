@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,10 +38,8 @@ class ExpandableLayout : ConstraintLayout {
     /** Current [State] of this [ExpandableLayout]. Read-only property. [State.Statical] by default. */
     var state = State.Statical
         private set(value) {
-            if (field != value) {
-                onStateChangeListener?.invoke(field, value)
-                field = value
-            }
+            onStateChangeListener?.invoke(field, value)
+            field = value
         }
 
     /**
@@ -49,26 +48,29 @@ class ExpandableLayout : ConstraintLayout {
     var onStateChangeListener: ((oldState: State, newState: State) -> Unit)? = null
 
     /**
-     * Collapsed height of view. WARNING! Don't set [collapsedHeight] less, then maximum height of wrapped view
+     * Collapsed height in pixels of view. WARNING! Don't set [collapsedHeight] less, then maximum height of wrapped view
      */
     var collapsedHeight = context.resources.getDimensionPixelSize(R.dimen.default_collapsed_height)
         set(value) {
             doOnGlobalLayout {
                 val maxHeight = contentView.getLayoutMaxHeight()
                 if (value > maxHeight) {
-                    throw IllegalArgumentException("CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight")
+                    Log.w(
+                        LOG_TAG,
+                        "CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight"
+                    )
                 }
             }
             if (state == State.Collapsed) {
                 contentView.layoutParams.height = value
-                shadow.requestLayout()
+                contentView.requestLayout()
             }
             collapsedSet.constrainHeight(R.id.evHolder, value)
             field = value
         }
 
     /**
-     * Height of shadow when layout is collapsed
+     * Height of shadow in pixels when layout is collapsed
      */
     var shadowHeight = context.resources.getDimensionPixelSize(R.dimen.default_shadow_height)
         set(value) {
@@ -95,15 +97,15 @@ class ExpandableLayout : ConstraintLayout {
         }
 
     /**
-     * Hide default collapse/expand button. Use if you want make custom button
+     * Show default collapse/expand button. Use if you want make custom button
      */
 
-    var hideButton = DEFAULT_HIDE_BUTTON_VALUE
+    var showButton = DEFAULT_HIDE_BUTTON_VALUE
         set(value) {
             val visibility = if (value) {
-                View.GONE
-            } else {
                 View.VISIBLE
+            } else {
+                View.GONE
             }
 
             moreImageView.visibility = visibility
@@ -130,7 +132,7 @@ class ExpandableLayout : ConstraintLayout {
      */
     var animationDuration = context.resources.getInteger(R.integer.default_animation_duration)
         set(value) {
-            if (!isInEditMode && field != value) {
+            if (!isInEditMode) {
                 transition = createTransitionSet(value.toLong())
             }
             field = value
@@ -146,12 +148,23 @@ class ExpandableLayout : ConstraintLayout {
             field = value
         }
 
+
+    private var animationSceneRootViewGroup: ViewGroup? = null
+
     /**
-     * Animation scene root for transition. Use for animate container for this view.
-     * Do not save when [ExpandableLayout] paralyzed. Set it manually when restore.
-     * Default is parent of this view, or self if parent is invalid
+     * Animation scene root id for transition. Use for animate container for this view.
+     * Default is self.
      */
-    var animationSceneRoot: ViewGroup? = null
+    var animationSceneRootId: Int = NO_ID
+        set(value) {
+            if (value == NO_ID) {
+                animationSceneRootViewGroup = null
+            } else {
+                doOnGlobalLayout {
+                    animationSceneRootViewGroup = findParentRecursively(value) as? ViewGroup
+                }
+            }
+        }
 
     /**
      * Toggle [ExpandableLayout] state. Ignore if [State.Statical]
@@ -179,8 +192,10 @@ class ExpandableLayout : ConstraintLayout {
             transition.setOnEndListener {
                 state = State.Collapsed
             }
-            val parent = animationSceneRoot ?: this.parent as? ViewGroup ?: this
+            val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
             TransitionManager.beginDelayedTransition(parent, transition)
+        } else {
+            state = State.Collapsed
         }
         collapsedSet.applyTo(this)
     }
@@ -197,8 +212,10 @@ class ExpandableLayout : ConstraintLayout {
             transition.setOnEndListener {
                 state = State.Expanded
             }
-            val parent = animationSceneRoot ?: this.parent as? ViewGroup ?: this
+            val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
             TransitionManager.beginDelayedTransition(parent, transition)
+        } else {
+            state = State.Expanded
         }
         expandedSet.applyTo(this)
     }
@@ -264,7 +281,7 @@ class ExpandableLayout : ConstraintLayout {
 
             showShadow = getBoolean(R.styleable.ExpandableLayout_el_showShadow, DEFAULT_SHOW_SHADOW_VALUE)
 
-            hideButton = getBoolean(R.styleable.ExpandableLayout_el_hideButton, DEFAULT_HIDE_BUTTON_VALUE)
+            showButton = getBoolean(R.styleable.ExpandableLayout_el_showButton, DEFAULT_HIDE_BUTTON_VALUE)
 
             val moreTextStyleable = getText(R.styleable.ExpandableLayout_el_moreText)
             if (moreTextStyleable != null) {
@@ -282,6 +299,9 @@ class ExpandableLayout : ConstraintLayout {
                 ContextCompat.getColor(context, R.color.defaultMoreColor)
             )
 
+            val rootId = getResourceId(R.styleable.ExpandableLayout_el_animationSceneRoot, NO_ID)
+            animationSceneRootId = rootId
+
             state = State.values()[getInt(R.styleable.ExpandableLayout_el_initialState, DEFAULT_STATE)]
         }
 
@@ -296,7 +316,7 @@ class ExpandableLayout : ConstraintLayout {
     }
 
     private fun clearCached() {
-        animationSceneRoot = null
+        animationSceneRootViewGroup = null
     }
 
     private fun createTransitionSet(animationDuration: Long) = TransitionSet().apply {
@@ -316,7 +336,7 @@ class ExpandableLayout : ConstraintLayout {
         collapsedHeight = restoredState.collapsedHeight
         shadowHeight = restoredState.shadowHeight
         showShadow = restoredState.showShadow
-        hideButton = restoredState.hideButton
+        showButton = restoredState.showButton
         animationDuration = restoredState.animationDuration
         moreColor = restoredState.moreColor
         moreText = restoredState.moreText
@@ -345,7 +365,7 @@ class ExpandableLayout : ConstraintLayout {
         collapsedHeight = this@ExpandableLayout.collapsedHeight
         shadowHeight = this@ExpandableLayout.shadowHeight
         showShadow = this@ExpandableLayout.showShadow
-        hideButton = this@ExpandableLayout.hideButton
+        showButton = this@ExpandableLayout.showButton
         animationDuration = this@ExpandableLayout.animationDuration
         moreColor = this@ExpandableLayout.moreColor
         moreText = this@ExpandableLayout.moreText
@@ -364,9 +384,10 @@ class ExpandableLayout : ConstraintLayout {
         var state: State = State.Collapsed
         var collapsedHeight: Int = -1
         var shadowHeight: Int = -1
+        var animationRootId: Int = 0
         var animationDuration: Int = -1
         var moreColor: Int = -1
-        var hideButton: Boolean = false
+        var showButton: Boolean = true
         var showShadow: Boolean = false
         var moreText: CharSequence = ""
 
@@ -375,9 +396,10 @@ class ExpandableLayout : ConstraintLayout {
             state = State.values()[source.readInt()]
             collapsedHeight = source.readInt()
             shadowHeight = source.readInt()
+            animationRootId = source.readInt()
             animationDuration = source.readInt()
             moreColor = source.readInt()
-            hideButton = source.readInt() == 1
+            showButton = source.readInt() == 1
             showShadow = source.readInt() == 1
             moreText = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(source)
         }
@@ -387,9 +409,10 @@ class ExpandableLayout : ConstraintLayout {
             dest.writeInt(state.ordinal)
             dest.writeInt(collapsedHeight)
             dest.writeInt(shadowHeight)
+            dest.writeInt(animationRootId)
             dest.writeInt(animationDuration)
             dest.writeInt(moreColor)
-            dest.writeInt(if (hideButton) 1 else 0)
+            dest.writeInt(if (showButton) 1 else 0)
             dest.writeInt(if (showShadow) 1 else 0)
             TextUtils.writeToParcel(moreText, dest, flags)
         }
@@ -407,9 +430,12 @@ class ExpandableLayout : ConstraintLayout {
     //endregion
 
     companion object {
-        private const val DEFAULT_SHOW_SHADOW_VALUE = false
-        private const val DEFAULT_HIDE_BUTTON_VALUE = false
+        private const val LOG_TAG = "rhanza.ExpandableLayout"
+
+        private const val DEFAULT_SHOW_SHADOW_VALUE = true
+        private const val DEFAULT_HIDE_BUTTON_VALUE = true
         private const val DEFAULT_STATE = 0
+        private const val NO_ID = 0
     }
 }
 

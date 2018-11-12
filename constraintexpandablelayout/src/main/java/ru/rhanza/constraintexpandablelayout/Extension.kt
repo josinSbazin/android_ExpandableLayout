@@ -1,9 +1,12 @@
 package ru.rhanza.constraintexpandablelayout
 
 import android.os.Build
+import android.support.annotation.LayoutRes
 import android.support.transition.Transition
 import android.view.View
+import android.view.ViewParent
 import android.view.ViewTreeObserver
+
 
 inline fun Transition.setOnEndListener(crossinline action: () -> Unit) {
     this.addListener(object : Transition.TransitionListener {
@@ -53,4 +56,12 @@ inline fun <V> V.doOnGlobalLayout(crossinline work: (view: V) -> Unit) where V :
                 work.invoke(this@doOnGlobalLayout)
             }
         })
+}
+
+fun View.findParentRecursively(@LayoutRes targetId: Int): ViewParent? {
+    if (id == targetId) {
+        return this as ViewParent
+    }
+    val parent = parent as? View ?: return null
+    return parent.findParentRecursively(targetId)
 }

@@ -4,10 +4,11 @@
         <attr name="el_collapsedHeight" format="dimension"/>
         <attr name="el_showShadow" format="boolean"/>
         <attr name="el_shadowHeight" format="dimension"/>
-        <attr name="el_hideButton" format="boolean"/>
+        <attr name="el_showButton" format="boolean"/>
         <attr name="el_moreText" format="string"/>
         <attr name="el_animationDuration" format="integer"/>
         <attr name="el_moreColor" format="color"/>
+        <attr name="el_animationSceneRoot" format="reference"/>
         <attr name="el_initialState" format="enum">
             <enum name="collapsed" value="0"/>
             <enum name="expanded" value="1"/>
