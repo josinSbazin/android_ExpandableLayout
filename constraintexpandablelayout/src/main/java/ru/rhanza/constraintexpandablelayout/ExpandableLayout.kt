@@ -36,6 +36,27 @@ class ExpandableLayout : ConstraintLayout {
 
     private lateinit var transition: TransitionSet
 
+    constructor(context: Context) : super(context) {
+        init()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init(attrs)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        init(attrs)
+    }
+
+    init {
+        LayoutInflater.from(context).inflate(R.layout.expandable_layout, this)
+        contentView = findViewById(R.id.evHolder)
+        moreTextView = findViewById(R.id.evMoreText)
+        moreImageView = findViewById(R.id.evMoreImage)
+        shadow = findViewById(R.id.evShadow)
+        dontInterceptAddView = false
+    }
+
     /** Current [State] of this [ExpandableLayout]. Read-only property. [State.Statical] by default. */
     var state = State.Statical
         private set(value) {
@@ -44,7 +65,7 @@ class ExpandableLayout : ConstraintLayout {
         }
 
     /**
-     * Invoke when [State] changed
+     * Invoke when [State] changed. After animation if animated
      */
     var onStateChangeListener: ((oldState: State, newState: State) -> Unit)? = null
 
@@ -54,12 +75,7 @@ class ExpandableLayout : ConstraintLayout {
     var collapsedHeight = context.resources.getDimensionPixelSize(R.dimen.default_collapsed_height)
         set(value) {
             doOnGlobalLayout {
-                val maxHeight = contentView.getLayoutMaxHeight()
-                if (value > maxHeight) {
-                    Log.w(
-                        LOG_TAG,
-                        "CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight"
-                    )
+                if (checkStatical(value)) {
                     makeStatical()
                 }
             }
@@ -70,6 +86,18 @@ class ExpandableLayout : ConstraintLayout {
             collapsedSet.constrainHeight(R.id.evHolder, value)
             field = value
         }
+
+    private fun checkStatical(value: Int): Boolean {
+        val maxHeight = contentView.getLayoutMaxHeight()
+        if (value > maxHeight) {
+            Log.w(
+                LOG_TAG,
+                "CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight"
+            )
+            return true
+        }
+        return false
+    }
 
     /**
      * Height of shadow in pixels when layout is collapsed
@@ -186,20 +214,19 @@ class ExpandableLayout : ConstraintLayout {
      * @param [withAnimation] should it collapse in any state forced. **true** by default.
      */
     fun collapse(withAnimation: Boolean = true, forced: Boolean = false) {
-        if (!forced && (state == State.Collapsed || state == State.Expanding || state == State.Collapsing)) {
-            return
-        }
-        if (withAnimation) {
-            state = State.Collapsing
-            transition.setOnEndListener {
+        if (forced || state == State.Expanded) {
+            if (withAnimation) {
+                state = State.Collapsing
+                transition.setOnEndListener {
+                    state = State.Collapsed
+                }
+                val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
+                TransitionManager.beginDelayedTransition(parent, transition)
+            } else {
                 state = State.Collapsed
             }
-            val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
-            TransitionManager.beginDelayedTransition(parent, transition)
-        } else {
-            state = State.Collapsed
+            collapsedSet.applyTo(this)
         }
-        collapsedSet.applyTo(this)
     }
 
     /**
@@ -208,40 +235,49 @@ class ExpandableLayout : ConstraintLayout {
      * @param [withAnimation] should it expand in any state forced. **true** by default.
      */
     fun expand(withAnimation: Boolean = true, forced: Boolean = false) {
-        if (!forced && (state == State.Expanded || state == State.Expanding || state == State.Collapsing)) return
-        if (withAnimation) {
-            state = State.Expanding
-            transition.setOnEndListener {
+        if (forced || state == State.Collapsed) {
+            if (withAnimation) {
+                state = State.Expanding
+                transition.setOnEndListener {
+                    state = State.Expanded
+                }
+                val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
+                TransitionManager.beginDelayedTransition(parent, transition)
+            } else {
                 state = State.Expanded
             }
-            val parent = animationSceneRootViewGroup ?: this.parent as? ViewGroup ?: this
-            TransitionManager.beginDelayedTransition(parent, transition)
-        } else {
-            state = State.Expanded
+            expandedSet.applyTo(this)
         }
-        expandedSet.applyTo(this)
     }
 
-
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init(attrs)
-    }
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(attrs)
-    }
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.expandable_layout, this)
-        contentView = findViewById(R.id.evHolder)
-        moreTextView = findViewById(R.id.evMoreText)
-        moreImageView = findViewById(R.id.evMoreImage)
-        shadow = findViewById(R.id.evShadow)
-        dontInterceptAddView = false
+    /**
+     * Invalidate state when dynamically changing content.
+     * @param [state] the state that the view will take at the correct [collapsedHeight].
+     */
+    fun invalidateState(state: State) {
+        when (state) {
+            State.Collapsed, State.Collapsing -> {
+                doOnGlobalLayout {
+                    if (checkStatical(collapsedHeight)) {
+                        makeStatical()
+                    } else {
+                        collapse(false, true)
+                    }
+                }
+            }
+            State.Expanded, State.Expanding -> {
+                doOnGlobalLayout {
+                    if (checkStatical(collapsedHeight)) {
+                        makeStatical()
+                    } else {
+                        expand(false, true)
+                    }
+                }
+            }
+            State.Statical -> {
+                makeStatical()
+            }
+        }
     }
 
     override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
