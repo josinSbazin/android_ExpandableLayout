@@ -118,8 +118,8 @@ Available public methods and properties:
 *   **fun toggle(withAnimation: Boolean = true)** - Toggle `ExpandableLayout` state. Ignore if `State.Statical`.  
 `withAnimation` should it toggle with animation or instantaneously. **true** by default.
 *   **fun collapse(withAnimation: Boolean = true, forced: Boolean = false)** -  Collapse `ExpandableLayout`. Ignore if `State.Statical`. 
-`withAnimation` should it collapse with animation or instantaneously. **false** by default.  
-`withAnimation` should it collapse in any state forced. **true** by default.
+`withAnimation` should it collapse with animation or instantaneously. **true** by default.  
+`forced` should it collapse in any state forced. **false** by default.
 *   **fun expand(withAnimation: Boolean = true, forced: Boolean = false)** -  Expand `ExpandableLayout`. Ignore if `State.Statical`. 
-`withAnimation` should it expand with animation or instantaneously. **false** by default.  
-`withAnimation` should it expand in any state forced. **true** by default.
+`withAnimation` should it expand with animation or instantaneously. **true** by default.  
+`forced` should it expand in any state forced. **false** by default.
