@@ -116,6 +116,7 @@ Available public methods and properties:
 *   **animationSceneRootId: Int** - Animation scene root id for transition. Use for animate container for this view.  Default is self
 
 *   **fun toggle(withAnimation: Boolean = true)** - Toggle `ExpandableLayout` state. Ignore if `State.Statical`.  
+
 `withAnimation` - should it toggle with animation or instantaneously. **true** by default.
 *   **fun collapse(withAnimation: Boolean = true, forced: Boolean = false)** -  Collapse `ExpandableLayout`. Ignore if `State.Statical`. 
 
