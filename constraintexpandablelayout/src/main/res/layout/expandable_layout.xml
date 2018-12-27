@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
        xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
+       tools:parentTag="android.support.constraint.ConstraintLayout"
         >
 
     <LinearLayout
@@ -15,14 +17,12 @@
             app:layout_constraintTop_toTopOf="parent"
             >
 
-        <!--content-->
-
     </LinearLayout>
 
     <View
             android:id="@+id/evShadow"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="@dimen/default_shadow_height"
             android:background="@drawable/fade_out"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/evHolder"

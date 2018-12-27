@@ -300,13 +300,22 @@ class ExpandableLayout : ConstraintLayout {
             context.obtainStyledAttributes(attrs, R.styleable.ExpandableLayout, defStyleAttr, defStyleRes)
 
         expandedSet = ConstraintSet().apply {
-            clone(context, R.layout.expandable_layout_expanded)
+            clone(this@ExpandableLayout)
+            setVisibility(R.id.evMoreImage, ConstraintSet.VISIBLE)
+            setVisibility(R.id.evMoreText, ConstraintSet.VISIBLE)
+            setRotation(R.id.evMoreImage, 180f)
         }
+
         collapsedSet = ConstraintSet().apply {
-            clone(context, R.layout.expandable_layout_collapsed)
+            clone(this@ExpandableLayout)
+            constrainHeight(R.id.evHolder, resources.getDimension(R.dimen.default_collapsed_height).toInt())
+            setVisibility(R.id.evShadow, ConstraintSet.VISIBLE)
+            setVisibility(R.id.evMoreImage, ConstraintSet.VISIBLE)
+            setVisibility(R.id.evMoreText, ConstraintSet.VISIBLE)
         }
+
         staticalSet = ConstraintSet().apply {
-            clone(context, R.layout.expandable_layout_expanded)
+            clone(expandedSet)
             setVisibility(R.id.evMoreText, View.GONE)
             setVisibility(R.id.evMoreImage, View.GONE)
         }
