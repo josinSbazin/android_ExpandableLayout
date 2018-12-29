@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="defaultMoreColor">#ff4081</color>
+    <color name="transparentWhite">#00ffffff</color>
 </resources>
