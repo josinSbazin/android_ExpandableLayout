@@ -88,15 +88,21 @@ class ExpandableLayout : ConstraintLayout {
         }
 
     private fun checkStatical(value: Int): Boolean {
-        val maxHeight = contentView.getLayoutMaxHeight()
-        if (value > maxHeight) {
-            Log.w(
-                LOG_TAG,
-                "CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight"
-            )
-            return true
+        try {
+            val maxHeight = contentView.getLayoutMaxHeight()
+
+            if (value > maxHeight) {
+                Log.w(
+                    LOG_TAG,
+                    "CollapsedHeight must be less then max height (unwrapped) of expandable layout. \nUnwrapped height - $maxHeight\ncollapsedHeight - $collapsedHeight"
+                )
+                return true
+            }
+            return false
+        } catch (e: IllegalArgumentException) {
+            Log.e(LOG_TAG, e.message)
+            return false
         }
-        return false
     }
 
     /**
