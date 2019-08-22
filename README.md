@@ -24,7 +24,7 @@ allprojects {
 2. Add the dependency:
 ```groovy
 dependencies {
-   implementation 'com.github.josinSbazin:android_ExpandableLayout:0.5'
+   implementation 'com.github.josinSbazin:android_ExpandableLayout:0.7'
 }
 ```
 
