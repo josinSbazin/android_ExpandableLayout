@@ -22,7 +22,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
-class ExpandableLayout : ConstraintLayout {
+open class ExpandableLayout : ConstraintLayout {
     private val contentView: LinearLayout
     private val moreTextView: TextView
     private val moreImageView: ImageView
