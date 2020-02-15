@@ -161,10 +161,10 @@ open class ExpandableLayout : ConstraintLayout {
      */
     var animationDuration = context.resources.getInteger(R.integer.default_animation_duration)
         set(value) {
-            if (!isInEditMode) {
-                transition = createTransitionSet(value.toLong())
-            }
             field = value
+            if (!isInEditMode) {
+                transition = createTransitionSet()
+            }
         }
 
     /**
@@ -198,6 +198,17 @@ open class ExpandableLayout : ConstraintLayout {
                 }
             }
         }
+
+    /**
+     * Override this method for custom transition set
+     */
+    open fun createTransitionSet() = TransitionSet().apply {
+        addTransition(ChangeBounds())
+        addTransition(Fade())
+        addTransition(Rotate())
+        ordering = TransitionSet.ORDERING_TOGETHER
+        duration = animationDuration.toLong()
+    }
 
     /**
      * Toggle [ExpandableLayout] state. Ignore if [State.Statical]
@@ -436,14 +447,6 @@ open class ExpandableLayout : ConstraintLayout {
             Log.e(LOG_TAG, e.message ?: "error")
             return false
         }
-    }
-
-    private fun createTransitionSet(animationDuration: Long) = TransitionSet().apply {
-        addTransition(ChangeBounds())
-        addTransition(Fade())
-        addTransition(Rotate())
-        ordering = TransitionSet.ORDERING_TOGETHER
-        duration = animationDuration
     }
 
     private fun setupMoreColor(@ColorInt color: Int) {
