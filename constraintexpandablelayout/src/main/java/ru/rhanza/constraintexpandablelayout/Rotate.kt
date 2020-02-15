@@ -4,8 +4,8 @@ import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.annotation.TargetApi
 import android.os.Build
-import android.support.transition.Transition
-import android.support.transition.TransitionValues
+import androidx.transition.Transition
+import androidx.transition.TransitionValues
 import android.view.View
 import android.view.ViewGroup
 
@@ -17,11 +17,11 @@ import android.view.ViewGroup
 class Rotate : Transition() {
 
     override fun captureStartValues(transitionValues: TransitionValues) {
-        transitionValues.values[PROPNAME_ROTATION] = transitionValues.view.rotation;
+        transitionValues.values[PROPNAME_ROTATION] = transitionValues.view.rotation
     }
 
     override fun captureEndValues(transitionValues: TransitionValues) {
-        transitionValues.values[PROPNAME_ROTATION] = transitionValues.view.rotation;
+        transitionValues.values[PROPNAME_ROTATION] = transitionValues.view.rotation
     }
 
     override fun createAnimator(

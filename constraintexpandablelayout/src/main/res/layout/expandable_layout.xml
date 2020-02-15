@@ -4,7 +4,7 @@
        xmlns:tools="http://schemas.android.com/tools"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       tools:parentTag="android.support.constraint.ConstraintLayout"
+       tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
         >
 
     <LinearLayout
@@ -28,7 +28,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/evHolder"
             />
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/evMoreImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             app:srcCompat="@drawable/ic_keyboard_arrow_down_accent"
             />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/evMoreText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

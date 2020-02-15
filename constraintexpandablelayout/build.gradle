@@ -6,13 +6,13 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.josinSbazin'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 5
-        versionName "0.5"
+        targetSdkVersion 29
+        versionCode 8
+        versionName "0.8"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -25,28 +25,31 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:transition:$supportLibrary_version"
-    implementation "com.android.support:appcompat-v7:$supportLibrary_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.android.support.constraint:constraint-layout:$constraint_version"
+
+    implementation "androidx.transition:transition:$transition_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
 }
 
 // build a jar with source files
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    getArchiveClassifier().set('sources')
 }
 
 task javadoc(type: Javadoc) {
     failOnError false
     source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
+    def cp = getClasspath()
+    cp += project.files(android.getBootClasspath().join(File.pathSeparator))
+    cp += configurations.compile
+    setClasspath(cp)
 }
 
 // build a jar with javadoc
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    getArchiveClassifier().set('javadoc')
     from javadoc.destinationDir
 }
 
