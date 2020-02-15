@@ -9,6 +9,7 @@
         <attr name="el_animationDuration" format="integer"/>
         <attr name="el_moreColor" format="color"/>
         <attr name="el_animationSceneRoot" format="reference"/>
+        <attr name="el_shadowDrawable" format="reference"/>
         <attr name="el_initialState" format="enum">
             <enum name="collapsed" value="0"/>
             <enum name="expanded" value="1"/>

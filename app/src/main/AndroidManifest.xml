@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="ru.rhanza.expandablelayout">
+        xmlns:tools="http://schemas.android.com/tools"
+        package="ru.rhanza.expandablelayout">
 
     <application
             android:allowBackup="false"
@@ -13,23 +13,23 @@
             tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
                 android:name=".XmlSampleActivity"
-                android:launchMode="singleInstance">
-        </activity>
+                android:launchMode="singleInstance" />
         <activity
                 android:name=".ProgrammaticallySampleActivity"
-                android:launchMode="singleInstance">
-        </activity>
+                android:launchMode="singleInstance" />
         <activity
                 android:name=".TransitionParentActivity"
-                android:launchMode="singleInstance">
-        </activity>
+                android:launchMode="singleInstance" />
+        <activity
+                android:name=".CustomShadowDrawableActivity"
+                android:launchMode="singleInstance" />
     </application>
 
 </manifest>

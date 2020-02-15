@@ -1,8 +1,8 @@
 package ru.rhanza.constraintexpandablelayout
 
 import android.os.Build
-import android.support.annotation.LayoutRes
-import android.support.transition.Transition
+import androidx.annotation.LayoutRes
+import androidx.transition.Transition
 import android.view.View
 import android.view.ViewParent
 import android.view.ViewTreeObserver

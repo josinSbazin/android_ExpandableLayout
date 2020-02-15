@@ -1,8 +1,10 @@
 package ru.rhanza.expandablelayout
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_programmatically_sample.*
+import kotlinx.android.synthetic.main.include_custom_button.view.*
+import ru.rhanza.constraintexpandablelayout.State
 
 class ProgrammaticallySampleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,6 +15,16 @@ class ProgrammaticallySampleActivity : AppCompatActivity() {
         content.showShadow = true
         content.animationDuration = 300
         content.collapsedHeight = 120
-        button.setOnClickListener { content.toggle() }
+        button.setOnClickListener { collapseExpandWithAnimation() }
+    }
+
+    fun collapseExpandWithAnimation() {
+        if (content.state == State.Collapsed) {
+            content.toggle()
+            button.moreImage.rotation = 180f
+        } else if (content.state == State.Expanded) {
+            content.toggle()
+            button.moreImage.rotation = 0f
+        }
     }
 }

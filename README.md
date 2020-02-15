@@ -24,7 +24,7 @@ allprojects {
 2. Add the dependency:
 ```groovy
 dependencies {
-   implementation 'com.github.josinSbazin:android_ExpandableLayout:0.7'
+   implementation 'com.github.josinSbazin:android_ExpandableLayout:0.8'
 }
 ```
 
@@ -49,6 +49,7 @@ Xml snippet:
         app:el_collapsedHeight="200dp"
         app:el_moreText="Expand/Collapse"
         app:el_shadowHeight="60dp"
+        app:el_shadowDrawable="@drawable/fade"
         app:el_showShadow="true"
         app:el_showButton="true"
         app:el_moreColor="@android:color/black"
@@ -64,11 +65,12 @@ You can setup this layout programmarically:
 override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_programmatically_sample)
-        //You can setup ConstraintExpandableLayout programmatically
+        //You can setup ExpandableLayout programmatically
         content.showButton = false
         content.showShadow = true
         content.animationDuration = 300
         content.collapsedHeight = 120
+        content.shadowDrawable = R.drawable.fade
         button.setOnClickListener { content.toggle() }
     }
 ```
@@ -78,6 +80,7 @@ Available xml attributes:
         app:el_collapsedHeight="200dp"
         app:el_showShadow="true"
         app:el_shadowHeight="60dp"
+        app:el_shadowDrawable="@drawable/fade"
         app:el_showButton="true"
         app:el_moreText="Expand/Collapse"
         app:el_animationDuration="100"
@@ -87,7 +90,7 @@ Available xml attributes:
 ```
 
 If the maximum height of the nested view is less than the collapsed height, then the view will take a static state.
-If you want to change the state at runtime (for example, filling content after loading), you can  you can use the 
+If you want to change the state at runtime (for example, filling content after loading), you can use the
 `collapse / expand` method with the parameter `forced` - true.
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,11 +111,12 @@ Available public methods and properties:
 *   **onStateChangeListener: ((oldState: State, newState: State) -> Unit)?** - Invoke when `State` changed.
 *   **collapsedHeight: Int** - Collapsed height in pixels of view. WARNING! Don't set [collapsedHeight] less, then maximum height of wrapped view.
 *   **shadowHeight: Int** - Height of shadow in pixels when layout is collapsed.
+*   **shadowDrawable: Int** - Custom drawable id for showing "shadow".
 *   **showShadow: Boolean** - If this parameter is true - show shadow in collapsed 'State'.
 *   **showButton: Boolean** - Show default collapse/expand button. Use if you want make custom button.
 *   **moreText: CharSequence** - Text showing on more button.
 *   **animationDuration: Int** - Duration of animation of collapse/expand. In milliseconds.
-*   **@ColorInt moreColor: Int** - Color of more button (text and arrow).
+*   **moreColor: Int** - Color of more button (text and arrow).
 *   **animationSceneRootId: Int** - Animation scene root id for transition. Use for animate container for this view.  Default is self
 
 *   **fun toggle(withAnimation: Boolean = true)** - Toggle `ExpandableLayout` state. Ignore if `State.Statical`.  
@@ -126,3 +130,6 @@ Available public methods and properties:
 
 `withAnimation` - should it expand with animation or instantaneously. **true** by default.  
 `forced` - should it expand in any state forced. **false** by default.
+
+*   **fun invalidateState(state: State)** - nvalidate state when dynamically changing content.
+`state` - the state that the view will take at the correct collapsedHeight.

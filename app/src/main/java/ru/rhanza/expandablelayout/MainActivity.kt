@@ -2,7 +2,7 @@ package ru.rhanza.expandablelayout
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -20,6 +20,10 @@ class MainActivity : AppCompatActivity() {
 
         transitionParent.setOnClickListener {
             startActivity(Intent(this, TransitionParentActivity::class.java))
+        }
+
+        customDrawable.setOnClickListener {
+            startActivity(Intent(this, CustomShadowDrawableActivity::class.java))
         }
     }
 }
