@@ -200,17 +200,6 @@ open class ExpandableLayout : ConstraintLayout {
         }
 
     /**
-     * Override this method for custom transition set
-     */
-    open fun createTransitionSet() = TransitionSet().apply {
-        addTransition(ChangeBounds())
-        addTransition(Fade())
-        addTransition(Rotate())
-        ordering = TransitionSet.ORDERING_TOGETHER
-        duration = animationDuration.toLong()
-    }
-
-    /**
      * Toggle [ExpandableLayout] state. Ignore if [State.Statical]
      * @param [withAnimation] should it toggle with animation or instantaneously. **true** by default.
      */
@@ -325,6 +314,17 @@ open class ExpandableLayout : ConstraintLayout {
         post {
             update(restoredState = ss)
         }
+    }
+
+    /**
+     * Override this method for custom transition set
+     */
+    protected open fun createTransitionSet() = TransitionSet().apply {
+        addTransition(ChangeBounds())
+        addTransition(Fade())
+        addTransition(Rotate())
+        ordering = TransitionSet.ORDERING_TOGETHER
+        duration = animationDuration.toLong()
     }
 
     private fun init(
