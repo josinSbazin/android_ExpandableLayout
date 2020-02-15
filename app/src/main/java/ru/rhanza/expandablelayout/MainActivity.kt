@@ -21,5 +21,9 @@ class MainActivity : AppCompatActivity() {
         transitionParent.setOnClickListener {
             startActivity(Intent(this, TransitionParentActivity::class.java))
         }
+
+        customDrawable.setOnClickListener {
+            startActivity(Intent(this, CustomShadowDrawableActivity::class.java))
+        }
     }
 }

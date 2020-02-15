@@ -13,6 +13,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -111,6 +113,19 @@ open class ExpandableLayout : ConstraintLayout {
         }
 
     /**
+     * Set custom drawable for "shadow" in ExpandableLayout. White to transparent gradient
+     * by default
+     */
+    @DrawableRes
+    var shadowDrawable = R.drawable.fade_out
+        set(value) {
+            if (field != value) {
+                shadow.setBackgroundResource(value)
+                field = value
+            }
+        }
+
+    /**
      * Show default collapse/expand button. Use if you want make custom button
      */
 
@@ -169,6 +184,7 @@ open class ExpandableLayout : ConstraintLayout {
      * Animation scene root id for transition. Use for animate container for this view.
      * Default is self.
      */
+    @IdRes
     var animationSceneRootId: Int = NO_ID
         set(value) {
             if (value == NO_ID) {
@@ -354,6 +370,11 @@ open class ExpandableLayout : ConstraintLayout {
             shadowHeight = getDimensionPixelSize(
                 R.styleable.ExpandableLayout_el_shadowHeight,
                 context.resources.getDimensionPixelSize(R.dimen.default_shadow_height)
+            )
+
+            shadowDrawable = getResourceId(
+                R.styleable.ExpandableLayout_el_shadowDrawable,
+                R.drawable.fade_out
             )
 
             showShadow =
