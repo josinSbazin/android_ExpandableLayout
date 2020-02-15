@@ -116,7 +116,7 @@ Available public methods and properties:
 *   **showButton: Boolean** - Show default collapse/expand button. Use if you want make custom button.
 *   **moreText: CharSequence** - Text showing on more button.
 *   **animationDuration: Int** - Duration of animation of collapse/expand. In milliseconds.
-*   **@ColorInt moreColor: Int** - Color of more button (text and arrow).
+*   **moreColor: Int** - Color of more button (text and arrow).
 *   **animationSceneRootId: Int** - Animation scene root id for transition. Use for animate container for this view.  Default is self
 
 *   **fun toggle(withAnimation: Boolean = true)** - Toggle `ExpandableLayout` state. Ignore if `State.Statical`.  
@@ -130,3 +130,6 @@ Available public methods and properties:
 
 `withAnimation` - should it expand with animation or instantaneously. **true** by default.  
 `forced` - should it expand in any state forced. **false** by default.
+
+*   **fun invalidateState(state: State)** - nvalidate state when dynamically changing content.
+`state` - the state that the view will take at the correct collapsedHeight.
