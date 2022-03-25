@@ -18,7 +18,7 @@ class ProgrammaticallySampleActivity : AppCompatActivity() {
         button.setOnClickListener { collapseExpandWithAnimation() }
     }
 
-    fun collapseExpandWithAnimation() {
+    private fun collapseExpandWithAnimation() {
         if (content.state == State.Collapsed) {
             content.toggle()
             button.moreImage.rotation = 180f

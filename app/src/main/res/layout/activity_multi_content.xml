@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+    <TextView
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:text="MainHeader"
+            android:drawableEnd="@drawable/ic_keyboard_arrow"
+            android:drawableRight="@drawable/ic_keyboard_arrow"
+            android:drawableTint="@android:color/black"
+            />
+
+    <ru.rhanza.constraintexpandablelayout.ExpandableLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:el_animationDuration="200"
+            app:el_collapsedHeight="1dp"
+            app:el_initialState="expanded"
+            app:el_moreColor="@android:color/black"
+            app:el_moreText="Expand/Collapse"
+            app:el_shadowHeight="60dp"
+            app:el_showButton="false"
+            app:el_showShadow="false"
+            >
+
+        <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="это текст-&quot;рыба&quot;, часто используемый в печати и вэб-дзайне."
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText"
+                />
+
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:src="@android:color/holo_blue_dark"
+                />
+
+    </ru.rhanza.constraintexpandablelayout.ExpandableLayout>
+</LinearLayout>

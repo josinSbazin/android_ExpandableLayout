@@ -25,5 +25,9 @@ class MainActivity : AppCompatActivity() {
         customDrawable.setOnClickListener {
             startActivity(Intent(this, CustomShadowDrawableActivity::class.java))
         }
+
+        multiContent.setOnClickListener {
+            startActivity(Intent(this, MultiContentActivity::class.java))
+        }
     }
 }

@@ -1,16 +1,14 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'maven'
-apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.josinSbazin'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode 8
         versionName "0.8"
         vectorDrawables.useSupportLibrary = true
@@ -43,7 +41,6 @@ task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.sourceFiles
     def cp = getClasspath()
     cp += project.files(android.getBootClasspath().join(File.pathSeparator))
-    cp += configurations.compile
     setClasspath(cp)
 }
 
